@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
     full_name VARCHAR(255) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     phone VARCHAR(20),
-    role ENUM('ADMIN', 'LECTURER', 'STUDENT', 'REVIEWER') NOT NULL,
+    role ENUM('ADMIN', 'LECTURER', 'STUDENT', 'MANAGER') NOT NULL,
     department VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY unique_email (email)
@@ -87,13 +87,13 @@ CREATE TABLE IF NOT EXISTS grades (
 
 -- Insert Sample Data
 
--- Insert Users (Admin, Lecturers, Students, Reviewers)
+-- Insert Users (Admin, Lecturers, Students, Managers)
 INSERT INTO users (username, password, full_name, email, phone, role, department) VALUES
 ('admin', 'admin123', 'Quản trị viên', 'admin@university.edu', '0912345678', 'ADMIN', 'IT'),
 ('lecturer1', 'pass123', 'Thầy Nguyễn Văn A', 'lecturer1@university.edu', '0987654321', 'LECTURER', 'Computer Science'),
 ('lecturer2', 'pass123', 'Thầy Trần Văn B', 'lecturer2@university.edu', '0976543210', 'LECTURER', 'Computer Science'),
-('reviewer1', 'pass123', 'PGS.TS Hồ Xuân C', 'reviewer1@university.edu', '0965432109', 'REVIEWER', 'Computer Science'),
-('reviewer2', 'pass123', 'Tiến sĩ Lê Thị D', 'reviewer2@university.edu', '0954321098', 'REVIEWER', 'IT'),
+('manager1', 'pass123', 'PGS.TS Hồ Xuân C', 'manager1@university.edu', '0965432109', 'MANAGER', 'Computer Science'),
+('manager2', 'pass123', 'Tiến sĩ Lê Thị D', 'manager2@university.edu', '0954321098', 'MANAGER', 'IT'),
 ('student1', 'pass123', 'Phạm Quốc An', 'student1@student.edu', '0943210987', 'STUDENT', 'Computer Science'),
 ('student2', 'pass123', 'Võ Thị Bảo', 'student2@student.edu', '0932109876', 'STUDENT', 'Computer Science'),
 ('student3', 'pass123', 'Đỗ Minh Cường', 'student3@student.edu', '0921098765', 'STUDENT', 'IT'),

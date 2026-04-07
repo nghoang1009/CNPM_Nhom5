@@ -12,71 +12,98 @@ public class PermissionManager {
     }
     
     private static void initializePermissions() {
-        // ADMIN Permissions
-        Set<String> adminPerms = new HashSet<>(Arrays.asList(
-            "VIEW_USERS",
-            "ADD_USER",
-            "EDIT_USER",
-            "DELETE_USER",
-            "VIEW_TOPICS",
-            "ADD_TOPIC",
-            "EDIT_TOPIC",
-            "DELETE_TOPIC",
-            "MANAGE_ASSIGNMENTS",
-            "APPROVE_ASSIGNMENT",
-            "REJECT_ASSIGNMENT",
-            "MANAGE_BOARDS",
-            "ADD_BOARD",
-            "EDIT_BOARD",
-            "DELETE_BOARD",
-            "MANAGE_BOARD_MEMBERS",
-            "VIEW_ALL_PROPOSALS",
-            "VIEW_ALL_GRADES",
-            "EXPORT_REPORTS",
-            "SYSTEM_SETTINGS"
+        // STUDENT (Sinh viên) Permissions
+        Set<String> studentPerms = new HashSet<>(Arrays.asList(
+            "LOGIN",
+            "LOGOUT",
+            "VIEW_PROFILE",
+            "EDIT_PROFILE",
+            "VIEW_ALL_TOPICS",
+            "REGISTER_TOPIC",
+            "VIEW_OWN_TOPICS",
+            "VIEW_OWN_ASSIGNMENTS",
+            "VIEW_GRADES"
         ));
-        rolePermissions.put("ADMIN", adminPerms);
+        rolePermissions.put("STUDENT", studentPerms);
         
-        // LECTURER Permissions
+        // LECTURER (Giảng viên) Permissions
         Set<String> lecturerPerms = new HashSet<>(Arrays.asList(
+            "LOGIN",
+            "LOGOUT",
             "VIEW_PROFILE",
             "EDIT_PROFILE",
             "CREATE_TOPIC",
             "EDIT_OWN_TOPIC",
             "VIEW_OWN_TOPICS",
             "VIEW_TOPIC_ASSIGNMENTS",
-            "APPROVE_ASSIGNMENT",
-            "REJECT_ASSIGNMENT",
-            "GRADE_PROPOSALS",
+            "GRADE_TOPICS",
             "VIEW_STUDENT_PROPOSALS",
-            "EXPORT_REPORT"
+            "VIEW_GRADES"
         ));
         rolePermissions.put("LECTURER", lecturerPerms);
         
-        // STUDENT Permissions
-        Set<String> studentPerms = new HashSet<>(Arrays.asList(
+        // MANAGER (Người quản lý) Permissions
+        Set<String> managerPerms = new HashSet<>(Arrays.asList(
+            "LOGIN",
+            "LOGOUT",
             "VIEW_PROFILE",
             "EDIT_PROFILE",
+            "MANAGE_TOPICS",
             "VIEW_ALL_TOPICS",
-            "REGISTER_TOPIC",
-            "VIEW_OWN_ASSIGNMENTS",
-            "VIEW_OWN_PROPOSALS",
-            "CREATE_PROPOSAL",
-            "EDIT_PROPOSAL",
-            "SUBMIT_PROPOSAL",
-            "VIEW_GRADES"
+            "EDIT_TOPIC",
+            "DELETE_TOPIC",
+            "MANAGE_BOARDS",
+            "ADD_BOARD",
+            "EDIT_BOARD",
+            "DELETE_BOARD",
+            "MANAGE_BOARD_MEMBERS",
+            "MANAGE_STUDENTS",
+            "VIEW_USERS",
+            "EDIT_USER",
+            "MANAGE_LECTURERS",
+            "GRADE_TOPICS",
+            "VIEW_ALL_GRADES",
+            "VIEW_ALL_PROPOSALS",
+            "EXPORT_REPORTS",
+            "VIEW_STATISTICS"
         ));
-        rolePermissions.put("STUDENT", studentPerms);
+        rolePermissions.put("MANAGER", managerPerms);
         
-        // REVIEWER Permissions
-        Set<String> reviewerPerms = new HashSet<>(Arrays.asList(
+        // ADMIN Permissions
+        Set<String> adminPerms = new HashSet<>(Arrays.asList(
+            "LOGIN",
+            "LOGOUT",
             "VIEW_PROFILE",
             "EDIT_PROFILE",
-            "VIEW_ASSIGNED_PROPOSALS",
-            "GRADE_PROPOSALS",
-            "VIEW_OWN_GRADES"
+            "MANAGE_USERS",
+            "VIEW_USERS",
+            "ADD_USER",
+            "EDIT_USER",
+            "DELETE_USER",
+            "MANAGE_STUDENTS",
+            "MANAGE_LECTURERS",
+            "MANAGE_TOPICS",
+            "VIEW_ALL_TOPICS",
+            "ADD_TOPIC",
+            "EDIT_TOPIC",
+            "DELETE_TOPIC",
+            "MANAGE_BOARDS",
+            "ADD_BOARD",
+            "EDIT_BOARD",
+            "DELETE_BOARD",
+            "MANAGE_BOARD_MEMBERS",
+            "MANAGE_ASSIGNMENTS",
+            "APPROVE_ASSIGNMENT",
+            "REJECT_ASSIGNMENT",
+            "GRADE_TOPICS",
+            "VIEW_ALL_PROPOSALS",
+            "VIEW_ALL_GRADES",
+            "EXPORT_REPORTS",
+            "VIEW_STATISTICS",
+            "SYSTEM_SETTINGS",
+            "MANAGE_PERMISSIONS"
         ));
-        rolePermissions.put("REVIEWER", reviewerPerms);
+        rolePermissions.put("ADMIN", adminPerms);
     }
     
     /**
@@ -146,9 +173,9 @@ public class PermissionManager {
     }
     
     /**
-     * Kiểm tra role là reviewer không
+     * Kiểm tra role là người quản lý không
      */
-    public static boolean isReviewer(User user) {
-        return user != null && "REVIEWER".equals(user.getRole());
+    public static boolean isManager(User user) {
+        return user != null && "MANAGER".equals(user.getRole());
     }
 }

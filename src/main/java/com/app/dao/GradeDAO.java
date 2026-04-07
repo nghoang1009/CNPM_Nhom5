@@ -71,6 +71,24 @@ public class GradeDAO {
         return grades;
     }
 
+    public List<Grade> getGradesByStudent(int studentId) {
+        List<Grade> grades = new ArrayList<>();
+        String sql = "SELECT g.* FROM grades g " +
+                    "JOIN proposals p ON g.proposal_id = p.proposal_id " +
+                    "WHERE p.student_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, studentId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                grades.add(mapRowToGrade(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting grades by student: " + e.getMessage());
+        }
+        return grades;
+    }
+
     public List<Grade> getAllGrades() {
         List<Grade> grades = new ArrayList<>();
         String sql = "SELECT * FROM grades";

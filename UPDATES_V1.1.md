@@ -6,8 +6,8 @@
 
 #### File Mới: `PermissionManager.java`
 - Quản lý quyền hạn của từng role
-- 4 role: ADMIN, LECTURER, STUDENT, REVIEWER
-- 20+ quyền khác nhau được định nghĩa rõ ràng
+- 4 role: ADMIN, LECTURER, STUDENT, MANAGER
+- 30+ quyền khác nhau được định nghĩa rõ ràng
 
 #### Các Phương Thức:
 ```java
@@ -20,7 +20,7 @@ hasAllPermissions(user, permission...)   // Tất cả các quyền
 isAdmin(user)
 isLecturer(user)
 isStudent(user)
-isReviewer(user)
+isManager(user)
 
 // Lấy toàn bộ quyền
 getPermissions(role)
@@ -42,10 +42,10 @@ getPermissions(role)
    - ⏻ Thoát Ứng Dụng
 
 2. **📋 Chức Năng (Features Menu) - Tùy Role**
-   - **ADMIN:** Quản lý người dùng, Quản lý đề tài, Quản lý hội đồng, Báo cáo & Thống kê
-   - **LECTURER:** Tạo đề tài, Quản lý đề tài, Duyệt đề tài, Chấm đề cương
+   - **ADMIN:** Quản lý người dùng, Quản lý đề tài, Quản lý hội đồng, Báo cáo & Thống kê, Cài đặt hệ thống
+   - **LECTURER:** Tạo đề tài, Quản lý đề tài, Xem đề tài, Chấm đề cương, Phân công đề tài
+   - **MANAGER:** Quản lý người dùng, Quản lý đề tài, Quản lý hội đồng, Chấm đề cương, Báo cáo & Thống kê
    - **STUDENT:** Đăng ký đề tài, Xem đề tài, Đề cương của tôi
-   - **REVIEWER:** Chấm đề cương, Thống kê chấm điểm
 
 3. **🛠️ Công Cụ (Tools Menu)**
    - 🔄 Làm Mới
@@ -95,43 +95,50 @@ File  Features  Tools  Help
 
 ---
 
-## 🔐 Quyền Hạn Chi Tiết
+## 🔐 Quyền Hạn Chi Tiết Theo UseCase Diagram
 
-### ADMIN (20+ quyền)
+### ADMIN (30+ quyền)
 ```
-✅ VIEW_USERS, ADD_USER, EDIT_USER, DELETE_USER
-✅ VIEW_TOPICS, ADD_TOPIC, EDIT_TOPIC, DELETE_TOPIC
+✅ LOGIN, LOGOUT
+✅ VIEW_PROFILE, EDIT_PROFILE
+✅ MANAGE_USERS, VIEW_USERS, ADD_USER, EDIT_USER, DELETE_USER
+✅ MANAGE_STUDENTS, MANAGE_LECTURERS
+✅ MANAGE_TOPICS, VIEW_ALL_TOPICS, ADD_TOPIC, EDIT_TOPIC, DELETE_TOPIC
+✅ MANAGE_BOARDS, ADD_BOARD, EDIT_BOARD, DELETE_BOARD, MANAGE_BOARD_MEMBERS
 ✅ MANAGE_ASSIGNMENTS, APPROVE_ASSIGNMENT, REJECT_ASSIGNMENT
-✅ MANAGE_BOARDS, ADD_BOARD, EDIT_BOARD, DELETE_BOARD
-✅ MANAGE_BOARD_MEMBERS
-✅ VIEW_ALL_PROPOSALS, VIEW_ALL_GRADES
-✅ EXPORT_REPORTS, SYSTEM_SETTINGS
+✅ GRADE_TOPICS, VIEW_ALL_PROPOSALS, VIEW_ALL_GRADES
+✅ EXPORT_REPORTS, VIEW_STATISTICS, SYSTEM_SETTINGS, MANAGE_PERMISSIONS
 ```
 
 ### LECTURER (11 quyền)
 ```
+✅ LOGIN, LOGOUT
 ✅ VIEW_PROFILE, EDIT_PROFILE
 ✅ CREATE_TOPIC, EDIT_OWN_TOPIC, VIEW_OWN_TOPICS
 ✅ VIEW_TOPIC_ASSIGNMENTS
-✅ APPROVE_ASSIGNMENT, REJECT_ASSIGNMENT
-✅ GRADE_PROPOSALS, VIEW_STUDENT_PROPOSALS
-✅ EXPORT_REPORT
+✅ GRADE_TOPICS, VIEW_STUDENT_PROPOSALS
+✅ VIEW_GRADES
+```
+
+### MANAGER - Người Quản Lý (21 quyền)
+```
+✅ LOGIN, LOGOUT
+✅ VIEW_PROFILE, EDIT_PROFILE
+✅ MANAGE_TOPICS, VIEW_ALL_TOPICS, EDIT_TOPIC, DELETE_TOPIC
+✅ MANAGE_BOARDS, ADD_BOARD, EDIT_BOARD, DELETE_BOARD, MANAGE_BOARD_MEMBERS
+✅ MANAGE_STUDENTS, MANAGE_LECTURERS
+✅ VIEW_USERS, EDIT_USER, MANAGE_USERS
+✅ GRADE_TOPICS, VIEW_ALL_GRADES, VIEW_ALL_PROPOSALS
+✅ EXPORT_REPORTS, VIEW_STATISTICS
 ```
 
 ### STUDENT (9 quyền)
 ```
+✅ LOGIN, LOGOUT
 ✅ VIEW_PROFILE, EDIT_PROFILE
-✅ VIEW_ALL_TOPICS, REGISTER_TOPIC
+✅ VIEW_ALL_TOPICS, REGISTER_TOPIC, VIEW_OWN_TOPICS
 ✅ VIEW_OWN_ASSIGNMENTS
-✅ VIEW_OWN_PROPOSALS, CREATE_PROPOSAL, EDIT_PROPOSAL, SUBMIT_PROPOSAL
 ✅ VIEW_GRADES
-```
-
-### REVIEWER (5 quyền)
-```
-✅ VIEW_PROFILE, EDIT_PROFILE
-✅ VIEW_ASSIGNED_PROPOSALS, GRADE_PROPOSALS
-✅ VIEW_OWN_GRADES
 ```
 
 ---
@@ -235,7 +242,7 @@ mvn exec:java -Dexec.mainClass="com.app.Main"
 - `admin / admin123` - Xem menu Admin
 - `lecturer1 / pass123` - Xem menu Lecturer
 - `student1 / pass123` - Xem menu Student
-- `reviewer1 / pass123` - Xem menu Reviewer
+- `manager1 / pass123` - Xem menu Manager
 
 ---
 

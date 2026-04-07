@@ -84,8 +84,8 @@ public class FrmTrangChu extends JFrame {
                 return "Giảng Viên";
             case "STUDENT":
                 return "Sinh Viên";
-            case "REVIEWER":
-                return "Hội Đồng Chấm";
+            case "MANAGER":
+                return "Người Quản Lý";
             default:
                 return role;
         }
@@ -99,9 +99,9 @@ public class FrmTrangChu extends JFrame {
                 () -> new FrmDangKiDeTai(currentUser).setVisible(true));
             addButton(contentPanel, "📄 Xem Đề Tài", 
                 () -> new FrmChiTietDeTai(currentUser).setVisible(true));
-            addButton(contentPanel, "✍️ Đề Cương Của Tôi", 
-                () -> new FrmChamDeCuong(currentUser).setVisible(true));
-            addButton(contentPanel, "📊 Thống Kê", 
+            addButton(contentPanel, "� Xem Điểm", 
+                () -> showStudentGrades());
+            addButton(contentPanel, "�📊 Thống Kê", 
                 () -> showStudentStats());
         } else if (PermissionManager.isLecturer(currentUser)) {
             addButton(contentPanel, "👤 Thông Tin Cá Nhân", 
@@ -127,13 +127,19 @@ public class FrmTrangChu extends JFrame {
                 () -> new FrmBaoCaoThongKe(currentUser).setVisible(true));
             addButton(contentPanel, "⚙️ Cài Đặt Hệ Thống", 
                 () -> new FrmCaiDatHeThong(currentUser).setVisible(true));
-        } else if (PermissionManager.isReviewer(currentUser)) {
+        } else if (PermissionManager.isManager(currentUser)) {
             addButton(contentPanel, "👤 Thông Tin Cá Nhân", 
                 () -> new FrmThongTinCaNhan(currentUser).setVisible(true));
+            addButton(contentPanel, "👥 Quản Lý Người Dùng", 
+                () -> new FrmQuanLyNguoiDung(currentUser).setVisible(true));
+            addButton(contentPanel, "📋 Quản Lý Đề Tài", 
+                () -> new FrmDangKiDeTai(currentUser).setVisible(true));
+            addButton(contentPanel, "👔 Quản Lý Hội Đồng", 
+                () -> new FrmQuanLyHoiDong(currentUser).setVisible(true));
             addButton(contentPanel, "⭐ Chấm Đề Cương", 
                 () -> new FrmChamDeCuong(currentUser).setVisible(true));
-            addButton(contentPanel, "📊 Thống Kê Chấm Điểm", 
-                () -> JOptionPane.showMessageDialog(this, "Chức năng đang phát triển"));
+            addButton(contentPanel, "📊 Báo Cáo & Thống Kê", 
+                () -> new FrmBaoCaoThongKe(currentUser).setVisible(true));
         }
 
         addButton(contentPanel, "🚪 Đăng Xuất", () -> {
@@ -163,6 +169,57 @@ public class FrmTrangChu extends JFrame {
         JScrollPane sp = new JScrollPane(ta);
         sp.setPreferredSize(new Dimension(400, 300));
         JOptionPane.showMessageDialog(this, sp, "Thống Kê", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void showStudentGrades() {
+        StringBuilder grades = new StringBuilder();
+        grades.append("📈 ĐIỂM CỦA CÁC EM\n");
+        grades.append("═══════════════════════════════════════════════════════\n\n");
+        grades.append(String.format("%-30s | %-7s | %-15s\n", "Đề Tài", "Điểm", "Ngày Chấm"));
+        grades.append("───────────────────────────────────────────────────────\n");
+        
+        try {
+            com.app.dao.GradeDAO gradeDAO = new com.app.dao.GradeDAO();
+            com.app.dao.ProposalDAO proposalDAO = new com.app.dao.ProposalDAO();
+            com.app.dao.ResearchTopicDAO topicDAO = new com.app.dao.ResearchTopicDAO();
+            
+            java.util.List<com.app.model.Grade> studentGrades = gradeDAO.getGradesByStudent(currentUser.getUserId());
+            
+            if (studentGrades.isEmpty()) {
+                grades.append("Chưa có điểm. Vui lòng chờ giảng viên chấm.\n");
+            } else {
+                double totalScore = 0;
+                for (com.app.model.Grade g : studentGrades) {
+                    com.app.model.Proposal proposal = proposalDAO.getProposalById(g.getProposalId());
+                    if (proposal != null) {
+                        com.app.model.ResearchTopic topic = topicDAO.getTopicById(proposal.getTopicId());
+                        String topicTitle = (topic != null) ? topic.getTitle() : "Không xác định";
+                        if (topicTitle.length() > 28) {
+                            topicTitle = topicTitle.substring(0, 25) + "...";
+                        }
+                        grades.append(String.format("%-30s | %7.2f | %s\n", 
+                            topicTitle, 
+                            g.getScore(),
+                            g.getGradedAt() != null ? g.getGradedAt().format(
+                                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "N/A"));
+                        totalScore += g.getScore();
+                    }
+                }
+                grades.append("───────────────────────────────────────────────────────\n");
+                grades.append(String.format("%-30s | %7.2f |\n", "Điểm Trung Bình", 
+                    totalScore / studentGrades.size()));
+            }
+        } catch (Exception e) {
+            grades.append("Lỗi kết nối cơ sở dữ liệu: ").append(e.getMessage());
+        }
+        
+        JTextArea ta = new JTextArea(grades.toString());
+        ta.setEditable(false);
+        ta.setFont(new Font("Monospaced", Font.PLAIN, 11));
+        ta.setBackground(new Color(245, 245, 245));
+        JScrollPane sp = new JScrollPane(ta);
+        sp.setPreferredSize(new Dimension(500, 300));
+        JOptionPane.showMessageDialog(this, sp, "Xem Điểm", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void addButton(JPanel panel, String text, Runnable action) {
@@ -244,9 +301,9 @@ public class FrmTrangChu extends JFrame {
             
             mnuFeatures.addSeparator();
             
-            JMenuItem itemProposals = new JMenuItem("Đề Cương Của Tôi");
-            itemProposals.addActionListener(e -> new FrmChamDeCuong(currentUser).setVisible(true));
-            mnuFeatures.add(itemProposals);
+            JMenuItem itemGrades = new JMenuItem("Xem Điểm");
+            itemGrades.addActionListener(e -> showStudentGrades());
+            mnuFeatures.add(itemGrades);
         } 
         else if (PermissionManager.isLecturer(currentUser)) {
             JMenuItem itemCreateTopic = new JMenuItem("Tạo Đề Tài Mới");
@@ -279,17 +336,35 @@ public class FrmTrangChu extends JFrame {
             mnuFeatures.addSeparator();
             
             JMenuItem itemBoards = new JMenuItem("Quản Lý Hội Đồng");
-            itemBoards.addActionListener(e -> new FrmPhanCongHoiDong(currentUser).setVisible(true));
+            itemBoards.addActionListener(e -> new FrmQuanLyHoiDong(currentUser).setVisible(true));
             mnuFeatures.add(itemBoards);
             
             JMenuItem itemReports = new JMenuItem("Báo Cáo & Thống Kê");
             itemReports.addActionListener(e -> JOptionPane.showMessageDialog(this, "Chức năng đang phát triển"));
             mnuFeatures.add(itemReports);
         }
-        else if (PermissionManager.isReviewer(currentUser)) {
+        else if (PermissionManager.isManager(currentUser)) {
+            JMenuItem itemUsers = new JMenuItem("Quản Lý Người Dùng");
+            itemUsers.addActionListener(e -> new FrmQuanLyNguoiDung(currentUser).setVisible(true));
+            mnuFeatures.add(itemUsers);
+            
+            JMenuItem itemTopics = new JMenuItem("Quản Lý Đề Tài");
+            itemTopics.addActionListener(e -> new FrmDangKiDeTai(currentUser).setVisible(true));
+            mnuFeatures.add(itemTopics);
+            
+            mnuFeatures.addSeparator();
+            
+            JMenuItem itemBoards = new JMenuItem("Quản Lý Hội Đồng");
+            itemBoards.addActionListener(e -> new FrmQuanLyHoiDong(currentUser).setVisible(true));
+            mnuFeatures.add(itemBoards);
+            
             JMenuItem itemGrade = new JMenuItem("Chấm Đề Cương");
             itemGrade.addActionListener(e -> new FrmChamDeCuong(currentUser).setVisible(true));
             mnuFeatures.add(itemGrade);
+            
+            JMenuItem itemReports = new JMenuItem("Báo Cáo & Thống Kê");
+            itemReports.addActionListener(e -> new FrmBaoCaoThongKe(currentUser).setVisible(true));
+            mnuFeatures.add(itemReports);
         }
         
         // 📊 Tools Menu
